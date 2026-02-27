@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Akkurat";
+  src: url("/fonts/Akkurat-Light.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Akkurat";
+  src: url("/fonts/Akkurat-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Akkurat";
+  src: url("/fonts/Akkurat-Italic.woff") format("woff");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Akkurat";
+  src: url("/fonts/Akkurat-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@theme inline {
+  --animate-scroll: scroll 8s linear infinite;
+  --color-cream: #f5f2eb;
+  --color-cream-dark: #eae5d8;
+  --color-olive: #4a5328;
+  --color-olive-light: #6b7a3a;
+  --color-navy: #1a1f2e;
+  --color-navy-light: #252b3d;
+  --color-accent: #f9f506;
+  --color-text-dark: #2c2c2c;
+  --color-text-muted: #6b6b6b;
+  --color-forest: #0a1d08;
+  --color-forest-dark: #203b14;
+  --color-sage: #e0e5d5;
+  --color-mint: #fbfdf6;
+  --font-sans: var(--font-spline-sans);
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-text-dark);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
