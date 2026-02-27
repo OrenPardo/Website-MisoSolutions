@@ -32,17 +32,7 @@
   font-display: swap;
 }
 
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
 @theme inline {
-  --animate-scroll: scroll 8s linear infinite;
   --color-cream: #f5f2eb;
   --color-cream-dark: #eae5d8;
   --color-olive: #4a5328;

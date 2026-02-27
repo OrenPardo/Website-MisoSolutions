@@ -1,6 +1,5 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import DashboardPreview from "@/components/DashboardPreview";
 import ForTeams from "@/components/ForTeams";
 import Stats from "@/components/Stats";
 import Logos from "@/components/Logos";
@@ -15,7 +14,6 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
-        <DashboardPreview />
         <ForTeams />
         <Stats />
         <Logos />
