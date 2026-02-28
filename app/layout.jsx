@@ -1,4 +1,4 @@
-import { splineSans, fragmentMono } from "./fonts";
+import { splineSans } from "./fonts";
 import "./globals.css";
 
 export const metadata = {
@@ -10,7 +10,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${splineSans.variable} ${fragmentMono.variable} antialiased`}>{children}</body>
+      <body className={`${splineSans.variable} antialiased`}>{children}</body>
     </html>
   );
 }

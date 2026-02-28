@@ -2,25 +2,9 @@
 
 @font-face {
   font-family: "Akkurat";
-  src: url("/fonts/Akkurat-Light.woff") format("woff");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Akkurat";
-  src: url("/fonts/Akkurat-Regular.woff") format("woff");
+  src: url("/fonts/Akkurat-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Akkurat";
-  src: url("/fonts/Akkurat-Italic.woff") format("woff");
-  font-weight: 400;
-  font-style: italic;
   font-display: swap;
 }
 
@@ -32,7 +16,19 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: fragmentMono;
+  src: url("/fonts/33a2dcc4e8ba98b4-s.p.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+}
+
 @theme inline {
+  --font-fragment-mono: fragmentMono, "fragmentMono Fallback", fragmentMono,
+    SFMono-Regular, "SF Mono", "JetBrains Mono", "Fira Code", "Cascadia Code",
+    "Source Code Pro", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
   --color-cream: #f5f2eb;
   --color-cream-dark: #eae5d8;
   --color-olive: #4a5328;
@@ -43,14 +39,59 @@
   --color-text-dark: #2c2c2c;
   --color-text-muted: #6b6b6b;
   --color-forest: #0a1d08;
+  --color-meadow-900: #0a1d08;
   --color-forest-dark: #203b14;
   --color-sage: #e0e5d5;
+  --color-pebble-200: #e0e5d5;
+  --color-pebble-50: #fbfdf6;
   --color-mint: #fbfdf6;
   --font-sans: var(--font-spline-sans);
 }
 
+:root {
+  --nav-height: 64px;
+  --nav-z-index: 200;
+  --grid-margin: 48px;
+  --grid-gutter: 24px;
+}
+
 body {
-  background: var(--color-cream);
+  background: #fbfdf6;
   color: var(--color-text-dark);
   font-family: var(--font-sans), system-ui, sans-serif;
 }
+
+.atlas-web-mono {
+  font-family: var(--font-fragment-mono);
+  font-size: 14px;
+  font-weight: 400;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.28px;
+  line-height: 14px;
+}
+
+.menu-mono-label {
+  font-family: var(--font-fragment-mono);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: 0.28px;
+  color: #0a1d08;
+}
+
+.menu-description {
+  font-family: "Akkurat", sans-serif;
+  font-weight: 400;
+  line-height: 34.7px;
+  letter-spacing: -0.6px;
+  color: #0a1d08;
+}
+
+.menu-link {
+  font-family: "Akkurat", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: #0a1d08;
+}
+
