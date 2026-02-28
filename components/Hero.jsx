@@ -49,27 +49,41 @@ const MASK_STYLE = {
 
 const TRACK_STYLE = { willChange: "transform" };
 
-const CONTENT_STYLE = {
-  transform: "translate3d(0, calc(-25% + var(--scroll-y, 0px)), 0)",
-  opacity: "var(--scroll-opacity, 1)",
-  maskImage: "var(--scroll-mask, none)",
-  WebkitMaskImage: "var(--scroll-mask, none)",
-  willChange: "transform, opacity",
-};
+// Easing functions matching Adaline's source
+function easeScale(t) {
+  // cubic-bezier(0.2, 0, 0.3, 1)
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
 
-const LANDSCAPE_STYLE = {
-  transform: "translate3d(0, 0, 0) scale(var(--landscape-scale, 1))",
-  willChange: "transform",
-};
+function easeBorderRadius(t) {
+  // cubic-bezier(0.2, 0.4, 0.4, 0)
+  return t * (2 - t);
+}
+
+function easeTranslateY(t) {
+  // Adaline's custom quadratic for curtain lift
+  return t < 0.5
+    ? -2 * Math.pow(t, 2)
+    : -2 * Math.pow(t - 0.5, 2) - 0.5;
+}
+
+function easeContent(t) {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function mapRange(easedProgress, start, end) {
+  return start + (end - start) * easedProgress;
+}
 
 export default function Hero() {
-  const sectionRef = useRef(null);
-  const bgRef = useRef(null);
+  const outerRef = useRef(null);
+  const stickyRef = useRef(null);
   const contentRef = useRef(null);
   const trackRef = useRef(null);
   const offsetRef = useRef(0);
   const lastTimeRef = useRef(null);
   const rafRef = useRef(null);
+  const currentProgress = useRef(0);
 
   // Carousel infinite scroll
   useEffect(() => {
@@ -103,107 +117,138 @@ export default function Hero() {
     };
   }, []);
 
-  // Scroll-driven parallax, content fade, mask, and pointer-events
+  // Scroll-driven shrink + curtain reveal animation
   useEffect(() => {
-    const section = sectionRef.current;
-    const landscape = bgRef.current;
+    const outer = outerRef.current;
+    const sticky = stickyRef.current;
     const content = contentRef.current;
-    if (!section || !landscape || !content) return;
+    if (!outer || !sticky || !content) return;
 
-    let ticking = false;
+    const isMobile = window.innerWidth < 768;
+    const scaleEnd = isMobile ? 0.95 : 0.97;
+    const radiusEnd = isMobile ? 16 : 32;
+    const lerpFactor = 0.15;
 
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const rect = section.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const scrolled = Math.max(0, -rect.top);
-        const progress = Math.min(1, scrolled / (vh * 0.8));
+    let animFrameId;
 
-        // Landscape: scale up (zoom reveal)
-        const scale = 1 + progress * 0.15;
-        landscape.style.setProperty("--landscape-scale", String(scale));
+    function animate() {
+      const rect = outer.getBoundingClientRect();
+      const heroH = rect.height;
+      const viewportH = window.innerHeight;
 
-        // Content: fade out + drift up
-        const opacity = Math.max(0, 1 - progress * 2);
-        content.style.setProperty("--scroll-y", `${-scrolled * 0.2}px`);
-        content.style.setProperty("--scroll-opacity", String(opacity));
+      // Animation window: last 50vh of scroll budget
+      const animStart = heroH - viewportH;
+      const animEnd = heroH - viewportH * 0.5;
+      const scrollY = -rect.top;
 
-        // Content: mask dissolve from bottom
-        if (progress > 0.05) {
-          const maskPct = Math.min(100, ((progress - 0.05) / 0.5) * 100);
-          content.style.setProperty(
-            "--scroll-mask",
-            `linear-gradient(to bottom, black ${100 - maskPct}%, transparent 100%)`
-          );
-        } else {
-          content.style.setProperty("--scroll-mask", "none");
-        }
+      const targetProgress = Math.max(
+        0,
+        Math.min(1, (scrollY - animStart) / (animEnd - animStart))
+      );
 
-        // Pointer events: disable when mostly faded
-        content.style.pointerEvents = opacity > 0.1 ? "auto" : "none";
+      // Lerp for smooth feel
+      currentProgress.current +=
+        (targetProgress - currentProgress.current) * lerpFactor;
+      const p = currentProgress.current;
 
-        ticking = false;
-      });
-    };
+      // Scale: 1 → scaleEnd (applied to inner sticky)
+      const scale = mapRange(easeScale(p), 1, scaleEnd);
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+      // Border radius: 0 → radiusEnd (applied to both)
+      const radius = mapRange(easeBorderRadius(p), 0, radiusEnd);
+
+      // TranslateY: 0 → -50vh (applied to outer wrapper, disabled on mobile)
+      const rawTY = -easeTranslateY(p); // 0 → +0.5
+      const translateYVh = isMobile ? 0 : rawTY * 50; // 0 → 25vh... wait
+
+      // Apply to outer wrapper: translateY + borderRadius
+      outer.style.transform = `translateY(-${translateYVh}vh)`;
+      outer.style.borderRadius = `${radius}px`;
+
+      // Apply to inner sticky: scale + borderRadius
+      sticky.style.transform = `scale(${scale})`;
+      sticky.style.borderRadius = `${radius}px`;
+
+      // Content fade + drift (first 40% of animation window)
+      const contentProgress = Math.min(1, p / 0.4);
+      const contentOpacity = 1 - easeContent(contentProgress);
+      const contentDrift = mapRange(easeContent(contentProgress), 0, -80);
+
+      content.style.opacity = String(contentOpacity);
+      content.style.transform = `translateY(${contentDrift}px)`;
+      content.style.pointerEvents = contentOpacity > 0.1 ? "auto" : "none";
+
+      animFrameId = requestAnimationFrame(animate);
+    }
+
+    animFrameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animFrameId);
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen overflow-hidden bg-pebble-50">
-      {/* Absolute background — parallax via scroll JS */}
-      <div className="absolute inset-x-0 top-0 h-[120%]">
-        <Image
-          ref={bgRef}
-          src="/images/hero-landscape.png"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-bottom"
-          style={LANDSCAPE_STYLE}
-        />
-      </div>
-
-      {/* Sticky content — fades + drifts via scroll JS */}
+    <div
+      ref={outerRef}
+      className="relative z-10"
+      style={{
+        height: "1750px",
+        marginBottom: "-50vh",
+        willChange: "transform, border-radius",
+        overflow: "clip",
+      }}
+    >
+      {/* Inner sticky: receives scale + borderRadius */}
       <div
-        ref={contentRef}
-        className="sticky top-[25vh] md:top-[22vh] z-20 flex flex-col items-center gap-6 md:gap-10 w-full text-center text-balance"
-        style={CONTENT_STYLE}
+        ref={stickyRef}
+        className="sticky top-0 h-screen w-full overflow-clip bg-pebble-50"
+        style={{ transformOrigin: "center bottom", willChange: "transform, border-radius" }}
       >
-        <h1
-          className="mx-[var(--grid-margin)] text-[53px] leading-[52px] md:text-[min(53px,min(calc(2.5vh+25px),calc(1.5vw+25px)))] md:leading-[calc(52/53)] tracking-[-0.04em] text-forest font-normal max-w-[32ch]"
-          style={{ fontFamily: '"Akkurat", sans-serif' }}
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/hero-landscape.png"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-bottom"
+          />
+        </div>
+
+        {/* Content: h1 + carousel */}
+        <div
+          ref={contentRef}
+          className="relative z-20 flex flex-col items-center gap-6 md:gap-10 w-full text-center text-balance pt-[25vh] md:pt-[22vh]"
+          style={{ willChange: "transform, opacity" }}
         >
-          <span>The single platform to iterate, evaluate, deploy, and monitor AI agents</span>
-        </h1>
+          <h1
+            className="mx-[var(--grid-margin)] text-[53px] leading-[52px] md:text-[min(53px,min(calc(2.5vh+25px),calc(1.5vw+25px)))] md:leading-[calc(52/53)] tracking-[-0.04em] text-forest font-normal max-w-[32ch]"
+            style={{ fontFamily: '"Akkurat", sans-serif' }}
+          >
+            <span>The single platform to iterate, evaluate, deploy, and monitor AI agents</span>
+          </h1>
 
-        {/* Trusted by + Logo carousel */}
-        <div className="flex flex-col items-center w-full">
-          <p className="mb-2 atlas-web-mono text-forest/50">
-            Trusted by
-          </p>
+          {/* Trusted by + Logo carousel */}
+          <div className="flex flex-col items-center w-full">
+            <p className="mb-2 atlas-web-mono text-forest/50">
+              Trusted by
+            </p>
 
-          {/* Logo carousel — 12-col grid */}
-          <div className="max-w-full w-full">
-            <div className="grid grid-cols-12 gap-[var(--grid-gutter)] w-full">
-              <div
-                className="col-span-12 lg:col-span-10 lg:col-start-2 xl:col-span-8 xl:col-start-3 flex items-center h-[64px] overflow-clip"
-                style={MASK_STYLE}
-              >
-                <div ref={trackRef} className="flex" style={TRACK_STYLE}>
-                  <LogoGroup prefix="a" />
-                  <LogoGroup prefix="b" />
+            <div className="max-w-full w-full">
+              <div className="grid grid-cols-12 gap-[var(--grid-gutter)] w-full">
+                <div
+                  className="col-span-12 lg:col-span-10 lg:col-start-2 xl:col-span-8 xl:col-start-3 flex items-center h-[64px] overflow-clip"
+                  style={MASK_STYLE}
+                >
+                  <div ref={trackRef} className="flex" style={TRACK_STYLE}>
+                    <LogoGroup prefix="a" />
+                    <LogoGroup prefix="b" />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
