@@ -217,24 +217,13 @@ function MonitorIllustration({ className }) {
   );
 }
 
-function DogTrainingIllustration({ className }) {
-  return (
-    <img
-      className={className}
-      src="/hf_20260301_123416_70a36666-d0e1-4cbd-a925-29a400394336.png"
-      alt="Dog training illustration"
-      style={{ objectFit: "cover", transform: "scale(1.45)" }}
-    />
-  );
-}
-
 const menuColumns = [
   {
     number: "1",
     label: "Design",
     href: "/editor",
     categoryHref: "/iterate",
-    descriptionText: "Sketch, test\nand refine",
+    descriptionText: "Simple\nby design",
     descriptionFontSize: "29.5px",
     IllustrationComponent: IterateIllustration,
     opacity: 0.99,
@@ -242,17 +231,18 @@ const menuColumns = [
     labelOpacity: 0.89,
     descriptionOpacity: 0.46,
     links: [
-      { name: "Editor", href: "/editor", opacity: 0.46 },
-      { name: "Playground", href: "/playground", opacity: 0.46 },
-      { name: "Datasets", href: "/datasets", opacity: 0.46 },
+      { name: "Website Design", href: "/website-design", opacity: 0.46 },
+      { name: "Landing Page Design", href: "/landing-page-design", opacity: 0.46 },
+      { name: "App Design", href: "/app-design", opacity: 0.46 },
+      { name: "UX Design", href: "/ux-design", opacity: 0.46 },
     ],
   },
   {
     number: "2",
-    label: "Evaluate",
-    href: "/evaluations",
-    categoryHref: "/evaluate",
-    descriptionText: "Reflect\nand measure",
+    label: "Development",
+    href: "/website-development",
+    categoryHref: "/development",
+    descriptionText: "Built\nto scale",
     descriptionFontSize: "29.5px",
     IllustrationComponent: EvaluateIllustration,
     opacity: 0.83,
@@ -260,16 +250,18 @@ const menuColumns = [
     labelOpacity: 0.89,
     descriptionOpacity: 0.46,
     links: [
-      { name: "Evaluations", href: "/evaluations", opacity: 0.46 },
-      { name: "Datasets", href: "/datasets", opacity: 0.40 },
+      { name: "Website Development", href: "/website-development", opacity: 0.46 },
+      { name: "Web App Development", href: "/web-app-development", opacity: 0.46 },
+      { name: "Mobile App Development", href: "/mobile-app-development", opacity: 0.46 },
+      { name: "Integrations", href: "/integrations", opacity: 0.40 },
     ],
   },
   {
     number: "3",
-    label: "Deploy",
-    href: "/deployments",
-    categoryHref: "/deploy",
-    descriptionText: "From draft\nto live",
+    label: "Digital",
+    href: "/templates",
+    categoryHref: "/digital",
+    descriptionText: "Download\nand go",
     descriptionFontSize: "29.6px",
     IllustrationComponent: DeployIllustration,
     opacity: 0.68,
@@ -277,17 +269,18 @@ const menuColumns = [
     labelOpacity: 0.83,
     descriptionOpacity: 0.40,
     links: [
-      { name: "Deployments", href: "/deployments", opacity: 0.40 },
-      { name: "Analytics", href: "/analytics", opacity: 0.40 },
-      { name: "Gateway", href: "https://github.com/adaline/gateway", opacity: 0.40, external: true },
+      { name: "Templates", href: "/templates", opacity: 0.40 },
+      { name: "Courses", href: "/courses", opacity: 0.40 },
+      { name: "AI Models", href: "/ai-models", opacity: 0.40 },
+      { name: "Systems Setup", href: "/systems-setup", opacity: 0.40 },
     ],
   },
   {
     number: "4",
-    label: "Monitor",
-    href: "/logs",
-    categoryHref: "/monitor",
-    descriptionText: "Insights\nin real time",
+    label: "3D Printing",
+    href: "/printing-service",
+    categoryHref: "/3d-printing",
+    descriptionText: "From file\nto part",
     descriptionFontSize: "29.9px",
     IllustrationComponent: MonitorIllustration,
     opacity: 0.61,
@@ -295,25 +288,29 @@ const menuColumns = [
     labelOpacity: 0.83,
     descriptionOpacity: 0.40,
     links: [
-      { name: "Logs", href: "/logs", opacity: 0.40 },
-      { name: "Analytics", href: "/analytics", opacity: 0.34 },
+      { name: "Printing Service", href: "/printing-service", opacity: 0.40 },
+      { name: "Prototype Pack", href: "/prototype-pack", opacity: 0.40 },
+      { name: "STL Library", href: "/stl-library", opacity: 0.40 },
+      { name: "Printers & Filament", href: "/printers-filament", opacity: 0.40 },
     ],
   },
   {
     number: "5",
-    label: "Monitor",
-    href: "/logs",
-    categoryHref: "/monitor",
-    descriptionText: "Insights\nin real time",
+    label: "Dog Training",
+    href: "/new-dog-consult",
+    categoryHref: "/dog-training",
+    descriptionText: "A calmer\nhome",
     descriptionFontSize: "29.9px",
-    IllustrationComponent: DogTrainingIllustration,
+    IllustrationComponent: MonitorIllustration,
     opacity: 0.54,
     badgeTop: "128px",
     labelOpacity: 0.76,
     descriptionOpacity: 0.34,
     links: [
-      { name: "Logs", href: "/logs", opacity: 0.34 },
-      { name: "Analytics", href: "/analytics", opacity: 0.28 },
+      { name: "New Dog Consult", href: "/new-dog-consult", opacity: 0.34 },
+      { name: "Puppy Training", href: "/puppy-training", opacity: 0.34 },
+      { name: "Obedience", href: "/obedience", opacity: 0.28 },
+      { name: "Behavior & Therapy", href: "/behavior-therapy", opacity: 0.28 },
     ],
   },
 ];
@@ -366,9 +363,9 @@ const ProductsMenu = memo(function ProductsMenu() {
           >
             <div
               className="flex items-start w-full relative"
-              style={{ aspectRatio: "327.75 / 194.5", maxHeight: "194.5px", minHeight: "128px", opacity: col.opacity }}
+              style={{ maxHeight: "194.5px", opacity: col.opacity }}
             >
-              <div className="w-[194.5px] h-[194.5px] relative shrink-0 self-stretch">
+              <div className="w-full max-w-[194.5px] relative" style={{ aspectRatio: "1" }}>
                 <col.IllustrationComponent className="w-full h-full" />
               </div>
               <div className="flex-1 min-w-0 relative self-stretch">
