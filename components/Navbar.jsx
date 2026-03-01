@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, memo } from "react";
+import { useState, useRef, useCallback, useEffect, memo } from "react";
 import Link from "next/link";
 
 function AdalineLogo({ className }) {
@@ -217,10 +217,21 @@ function MonitorIllustration({ className }) {
   );
 }
 
+function DogTrainingIllustration({ className }) {
+  return (
+    <img
+      className={className}
+      src="/hf_20260301_123416_70a36666-d0e1-4cbd-a925-29a400394336.png"
+      alt="Dog training illustration"
+      style={{ objectFit: "cover", transform: "scale(1.45)" }}
+    />
+  );
+}
+
 const menuColumns = [
   {
     number: "1",
-    label: "Iterate",
+    label: "Design",
     href: "/editor",
     categoryHref: "/iterate",
     descriptionText: "Sketch, test\nand refine",
@@ -288,11 +299,29 @@ const menuColumns = [
       { name: "Analytics", href: "/analytics", opacity: 0.34 },
     ],
   },
+  {
+    number: "5",
+    label: "Monitor",
+    href: "/logs",
+    categoryHref: "/monitor",
+    descriptionText: "Insights\nin real time",
+    descriptionFontSize: "29.9px",
+    IllustrationComponent: DogTrainingIllustration,
+    opacity: 0.54,
+    badgeTop: "128px",
+    labelOpacity: 0.76,
+    descriptionOpacity: 0.34,
+    links: [
+      { name: "Logs", href: "/logs", opacity: 0.34 },
+      { name: "Analytics", href: "/analytics", opacity: 0.28 },
+    ],
+  },
 ];
 
 // Module-level style constants — allocated once, reused every render
 const NAV_STYLE = { fontFamily: '"Akkurat", sans-serif' };
-const NAV_INNER_STYLE = { zIndex: "var(--nav-z-index, 200)" };
+const NAV_INNER_STYLE = { zIndex: "var(--nav-z-index, 200)", transition: "background-color 200ms ease" };
+const NAV_INNER_STYLE_SOLID = { zIndex: "var(--nav-z-index, 200)", backgroundColor: "#fbfdf6", transition: "background-color 200ms ease" };
 const CHEVRON_OPEN_STYLE = { transition: "transform 488ms cubic-bezier(0.40, 0.25, 0.15, 0.95)", transform: "rotate(180deg)" };
 const CHEVRON_CLOSED_STYLE = { transition: "transform 488ms cubic-bezier(0.40, 0.25, 0.15, 0.95)", transform: "rotate(0deg)" };
 const DROPDOWN_WRAPPER_STYLE = { zIndex: "calc(var(--nav-z-index, 200) - 10)" };
@@ -412,8 +441,30 @@ const ProductsMenu = memo(function ProductsMenu() {
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [pastHero, setPastHero] = useState(false);
   const hasOpenedRef = useRef(false);
+  const pastHeroRef = useRef(false);
   if (menuOpen) hasOpenedRef.current = true;
+
+  useEffect(() => {
+    let threshold = null;
+    const update = () => {
+      if (threshold === null) {
+        const el = document.querySelector("main > div");
+        if (el) threshold = el.offsetTop;
+      }
+      if (threshold !== null) {
+        const past = window.scrollY + 64 >= threshold;
+        if (past !== pastHeroRef.current) {
+          pastHeroRef.current = past;
+          setPastHero(past);
+        }
+      }
+    };
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+    return () => window.removeEventListener("scroll", update);
+  }, []);
 
   const handleMouseEnter = useCallback(() => setMenuOpen(true), []);
   const handleToggle = useCallback(() => setMenuOpen((prev) => !prev), []);
@@ -426,7 +477,7 @@ export default function Navbar() {
     >
       <div
         className="relative flex flex-row items-center justify-center px-[48px] h-[var(--nav-height)] shadow-[0_1px_0_0_transparent] transition-shadow duration-200"
-        style={NAV_INNER_STYLE}
+        style={pastHero || menuOpen ? NAV_INNER_STYLE_SOLID : NAV_INNER_STYLE}
       >
         {/* Left: Navigation links */}
         <div className="hidden md:flex flex-1 items-center gap-10 lg:gap-12">
