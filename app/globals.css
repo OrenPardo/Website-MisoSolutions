@@ -29,10 +29,13 @@
     SFMono-Regular, "SF Mono", "JetBrains Mono", "Fira Code", "Cascadia Code",
     "Source Code Pro", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono",
     "Courier New", monospace;
+  --font-heading: "Akkurat", sans-serif;
+  --font-sans: var(--font-spline-sans);
   --color-cream: #f5f2eb;
   --color-cream-dark: #eae5d8;
   --color-olive: #4a5328;
   --color-olive-light: #6b7a3a;
+  --color-olive-muted: #6b7860;
   --color-navy: #1a1f2e;
   --color-navy-light: #252b3d;
   --color-accent: #f9f506;
@@ -45,7 +48,6 @@
   --color-pebble-200: #e0e5d5;
   --color-pebble-50: #fbfdf6;
   --color-mint: #fbfdf6;
-  --font-sans: var(--font-spline-sans);
 }
 
 :root {

@@ -1,6 +1,5 @@
 const MUTED = "#C5CCB6";
 const ACTIVE = "#0A1D08";
-const COUNTER_COLOR = "#6B7860";
 
 function IterateIcon({ color }) {
   return (
@@ -121,7 +120,7 @@ function StepNumber({ number, color }) {
   return (
     <div
       className="absolute inset-0 flex items-center justify-center text-[13.2px] font-normal"
-      style={{ color, fontFamily: "var(--font-spline-sans), sans-serif" }}
+      style={{ color }}
     >
       {number}
     </div>
@@ -141,10 +140,7 @@ function ProgressBar({ total }) {
 function StepCounter({ current, total }) {
   return (
     <div className="absolute right-0 top-0 flex items-center">
-      <span
-        className="text-[13.2px] text-right"
-        style={{ color: COUNTER_COLOR, fontFamily: "var(--font-spline-sans), sans-serif" }}
-      >
+      <span className="text-[13.2px] text-right text-olive-muted">
         {current} / {total}
       </span>
     </div>
@@ -213,10 +209,7 @@ export default function WorkflowStepper() {
               <div className="relative w-full pl-4">
                 <span
                   className="text-sm font-normal leading-5 whitespace-nowrap"
-                  style={{
-                    color,
-                    fontFamily: "var(--font-spline-sans), sans-serif",
-                  }}
+                  style={{ color }}
                 >
                   {step.label}
                 </span>

@@ -6,10 +6,7 @@ const links = [
 export default function LearnMoreBar() {
   return (
     <aside className="bg-[#eff2e8] flex gap-4 items-center overflow-hidden pl-4 pr-2 rounded-lg h-full">
-      <p
-        className="text-[13.8px] font-normal leading-5 whitespace-nowrap"
-        style={{ color: "#6b7860", fontFamily: "var(--font-spline-sans), sans-serif" }}
-      >
+      <p className="text-[13.8px] font-normal leading-5 whitespace-nowrap text-olive-muted">
         Learn more
       </p>
       <ul className="flex items-center">

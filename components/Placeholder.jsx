@@ -29,9 +29,11 @@ function PanelBody() {
 export default function Placeholder() {
   return (
     <section className="bg-[#fbfdf6] flex flex-col items-start">
-      {/* Anchor menu — sticks under the navbar */}
+      {/* Top spacing — scrolls away normally */}
+      <div className="w-full pt-16" />
+      {/* Anchor menu — sticks directly under the navbar */}
       <div
-        className="sticky z-10 w-full px-12 pt-16 bg-[#fbfdf6]"
+        className="sticky z-10 w-full px-12 bg-[#fbfdf6]"
         style={{ top: "var(--nav-height, 64px)" }}
       >
         <div className="flex items-center justify-between max-w-[2048px]">

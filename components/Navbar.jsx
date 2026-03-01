@@ -329,7 +329,7 @@ const GRID_OPEN_STYLE = { gridTemplateRows: "1fr", transition: "grid-template-ro
 const GRID_CLOSED_STYLE = { gridTemplateRows: "0fr", transition: "grid-template-rows 600ms cubic-bezier(0.52, 0, 0.07, 1)" };
 const OVERFLOW_HIDDEN_STYLE = { overflow: "hidden" };
 const DROPDOWN_CONTENT_STYLE = { backgroundColor: "rgb(251, 253, 246)", paddingTop: "var(--nav-height, 64px)" };
-const BADGE_STYLE = { backgroundColor: "#D7E8B5", fontFamily: '"Akkurat", sans-serif', fontSize: "12px", fontWeight: 700, lineHeight: "20px", color: "#0A1D08" };
+const BADGE_STYLE = { backgroundColor: "#D7E8B5", fontSize: "12px", fontWeight: 700, lineHeight: "20px", color: "#0A1D08" };
 const WATCH_DEMO_STYLE = { border: "1px solid #E0E5D5", color: "rgb(32, 59, 20)" };
 const START_FREE_STYLE = { backgroundColor: "rgb(32, 59, 20)", color: "rgb(251, 253, 246)", fontVariantCaps: "all-small-caps" };
 
@@ -360,7 +360,7 @@ const ProductsMenu = memo(function ProductsMenu() {
       <div className="flex gap-[24px] items-start justify-center w-full">
         {menuColumns.map((col) => (
           <Link
-            key={`illust-${col.label}`}
+            key={col.number}
             href={col.href}
             className="py-[48px] flex-1 min-w-0"
           >
@@ -394,7 +394,7 @@ const ProductsMenu = memo(function ProductsMenu() {
       <DashedDivider opacity={0.76} />
       <div className="flex gap-[24px] w-full">
         {menuColumns.map((col) => (
-          <div key={`cat-${col.label}`} className="flex-1 min-w-0 flex flex-col gap-[24px]">
+          <div key={`cat-${col.number}`} className="flex-1 min-w-0 flex flex-col gap-[24px]">
             <Link href={col.categoryHref} className="flex flex-col gap-[14.85px] pt-[48px]">
               <span className="menu-mono-label" style={{ opacity: col.labelOpacity }}>
                 {col.label}

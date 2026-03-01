@@ -18,27 +18,21 @@ const features = [
   },
 ];
 
-function FeatureItem({ number, title, description, titleColor = "#6b7860" }) {
+function FeatureItem({ number, title, description, titleColor }) {
   return (
     <li className="border-t border-pebble-200 flex items-start pt-[17px]">
-      <div
-        className="w-12 shrink-0 text-[18px] font-normal leading-[26px]"
-        style={{ color: "#6b7860", fontFamily: "var(--font-spline-sans), sans-serif" }}
-      >
+      <div className="w-12 shrink-0 text-[18px] font-normal leading-[26px] text-olive-muted">
         {number}
       </div>
       <div className="flex-1 flex flex-col">
         <h3
-          className="text-[17.7px] font-normal leading-[26px] pb-4"
-          style={{ color: titleColor, fontFamily: "var(--font-spline-sans), sans-serif" }}
+          className="text-[17.7px] font-normal leading-[26px] pb-4 text-olive-muted"
+          style={titleColor ? { color: titleColor } : undefined}
         >
           {title}
         </h3>
         {description && (
-          <p
-            className="text-[17.6px] font-normal leading-[26px] pb-4 text-pretty"
-            style={{ color: "#6b7860", fontFamily: "var(--font-spline-sans), sans-serif" }}
-          >
+          <p className="text-[17.6px] font-normal leading-[26px] pb-4 text-pretty text-olive-muted">
             {description}
           </p>
         )}

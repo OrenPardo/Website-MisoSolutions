@@ -32,10 +32,7 @@ function FileRow({ name, icon, opacity, indent }) {
       style={{ opacity, marginLeft: indent }}
     >
       <img src={icon} alt="" className="w-5 h-5 shrink-0" />
-      <span
-        className="text-[13.9px] font-normal leading-5 whitespace-nowrap text-forest"
-        style={{ fontFamily: "var(--font-spline-sans), sans-serif" }}
-      >
+      <span className="text-[13.9px] font-normal leading-5 whitespace-nowrap text-forest">
         {name}
       </span>
     </div>
@@ -52,10 +49,7 @@ export default function ProjectPanel() {
       <div className="absolute right-4 inset-y-0 border-l border-dashed border-[#c5ccb6] opacity-20" />
 
       {/* Shared label */}
-      <p
-        className="text-[11.8px] font-normal leading-4 text-forest opacity-70 mb-1"
-        style={{ fontFamily: "var(--font-spline-sans), sans-serif" }}
-      >
+      <p className="text-[11.8px] font-normal leading-4 text-forest opacity-70 mb-1">
         Shared
       </p>
 
