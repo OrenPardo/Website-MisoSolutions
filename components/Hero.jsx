@@ -79,6 +79,7 @@ export default function Hero() {
   const outerRef = useRef(null);
   const stickyRef = useRef(null);
   const contentRef = useRef(null);
+  const bgRef = useRef(null);
   const trackRef = useRef(null);
   const offsetRef = useRef(0);
   const lastTimeRef = useRef(null);
@@ -136,15 +137,23 @@ export default function Hero() {
       const heroH = rect.height;
       const viewportH = window.innerHeight;
 
-      // Animation window: last 50vh of scroll budget
-      const animStart = heroH - viewportH;
-      const animEnd = heroH - viewportH * 0.5;
+      // Image finishes revealing when hero bottom reaches viewport bottom
+      const imageEnd = heroH - viewportH;
+      // Shrink animation starts after 65% of hero has been scrolled through
+      const animStart = heroH * 0.65;
+      const animEnd = animStart + viewportH * 0.35;
       const scrollY = -rect.top;
 
       const targetProgress = Math.max(
         0,
         Math.min(1, (scrollY - animStart) / (animEnd - animStart))
       );
+
+      // Scroll the background image up to reveal the hidden bottom 30%
+      if (bgRef.current) {
+        const bgProgress = Math.min(1, Math.max(0, scrollY / imageEnd));
+        bgRef.current.style.transform = `translateY(${-bgProgress * 30 / 1.3}%)`;
+      }
 
       // Lerp for smooth feel
       currentProgress.current +=
@@ -169,14 +178,11 @@ export default function Hero() {
       sticky.style.transform = `scale(${scale})`;
       sticky.style.borderRadius = `${radius}px`;
 
-      // Content fade + drift (first 40% of animation window)
-      const contentProgress = Math.min(1, p / 0.4);
-      const contentOpacity = 1 - easeContent(contentProgress);
-      const contentDrift = mapRange(easeContent(contentProgress), 0, -80);
-
+      // Content fades out as it scrolls off-screen
+      const contentBottom = content.getBoundingClientRect().bottom;
+      const contentH = content.offsetHeight;
+      const contentOpacity = Math.max(0, Math.min(1, (contentBottom - 64) / (contentH * 0.35)));
       content.style.opacity = String(contentOpacity);
-      content.style.transform = `translateY(${contentDrift}px)`;
-      content.style.pointerEvents = contentOpacity > 0.1 ? "auto" : "none";
 
       animFrameId = requestAnimationFrame(animate);
     }
@@ -190,59 +196,59 @@ export default function Hero() {
       ref={outerRef}
       className="relative z-10"
       style={{
-        height: "1750px",
+        height: "2000px",
         marginBottom: "-50vh",
         willChange: "transform, border-radius",
         overflow: "clip",
       }}
     >
-      {/* Inner sticky: receives scale + borderRadius */}
+      {/* Inner sticky: receives scale + borderRadius (background only) */}
       <div
         ref={stickyRef}
         className="sticky top-0 h-screen w-full overflow-clip bg-pebble-50"
         style={{ transformOrigin: "center bottom", willChange: "transform, border-radius" }}
       >
-        {/* Background image */}
-        <div className="absolute inset-0">
+        {/* Background image — 1.3× taller, anchored to top, bottom hidden */}
+        <div ref={bgRef} className="absolute inset-x-0 top-0" style={{ height: "130%", willChange: "transform" }}>
           <Image
             src="/images/hero-landscape.png"
             alt=""
             fill
             priority
             sizes="100vw"
-            className="object-cover object-bottom"
+            className="object-cover object-top"
           />
         </div>
+      </div>
 
-        {/* Content: h1 + carousel */}
-        <div
-          ref={contentRef}
-          className="relative z-20 flex flex-col items-center gap-6 md:gap-10 w-full text-center text-balance pt-[25vh] md:pt-[22vh]"
-          style={{ willChange: "transform, opacity" }}
+      {/* Content: h1 + carousel — scrolls naturally with the page */}
+      <div
+        ref={contentRef}
+        className="absolute top-0 left-0 right-0 z-20 flex flex-col items-center gap-6 md:gap-10 w-full text-center text-balance pt-[25vh] md:pt-[22vh]"
+        style={{ willChange: "opacity" }}
+      >
+        <h1
+          className="mx-[var(--grid-margin)] text-[53px] leading-[52px] md:text-[min(53px,min(calc(2.5vh+25px),calc(1.5vw+25px)))] md:leading-[calc(52/53)] tracking-[-0.04em] text-forest font-normal max-w-[32ch]"
+          style={{ fontFamily: '"Akkurat", sans-serif' }}
         >
-          <h1
-            className="mx-[var(--grid-margin)] text-[53px] leading-[52px] md:text-[min(53px,min(calc(2.5vh+25px),calc(1.5vw+25px)))] md:leading-[calc(52/53)] tracking-[-0.04em] text-forest font-normal max-w-[32ch]"
-            style={{ fontFamily: '"Akkurat", sans-serif' }}
-          >
-            <span>The single platform to iterate, evaluate, deploy, and monitor AI agents</span>
-          </h1>
+          <span>The single platform to iterate, evaluate, deploy, and monitor AI agents</span>
+        </h1>
 
-          {/* Trusted by + Logo carousel */}
-          <div className="flex flex-col items-center w-full">
-            <p className="mb-2 atlas-web-mono text-forest/50">
-              Trusted by
-            </p>
+        {/* Trusted by + Logo carousel */}
+        <div className="flex flex-col items-center w-full">
+          <p className="mb-2 atlas-web-mono text-forest/50">
+            Trusted by
+          </p>
 
-            <div className="max-w-full w-full">
-              <div className="grid grid-cols-12 gap-[var(--grid-gutter)] w-full">
-                <div
-                  className="col-span-12 lg:col-span-10 lg:col-start-2 xl:col-span-8 xl:col-start-3 flex items-center h-[64px] overflow-clip"
-                  style={MASK_STYLE}
-                >
-                  <div ref={trackRef} className="flex" style={TRACK_STYLE}>
-                    <LogoGroup prefix="a" />
-                    <LogoGroup prefix="b" />
-                  </div>
+          <div className="max-w-full w-full">
+            <div className="grid grid-cols-12 gap-[var(--grid-gutter)] w-full">
+              <div
+                className="col-span-12 lg:col-span-10 lg:col-start-2 xl:col-span-8 xl:col-start-3 flex items-center h-[64px] overflow-clip"
+                style={MASK_STYLE}
+              >
+                <div ref={trackRef} className="flex" style={TRACK_STYLE}>
+                  <LogoGroup prefix="a" />
+                  <LogoGroup prefix="b" />
                 </div>
               </div>
             </div>

@@ -316,7 +316,7 @@ const menuColumns = [
 ];
 
 // Module-level style constants — allocated once, reused every render
-const NAV_STYLE = { fontFamily: '"Akkurat", sans-serif' };
+const NAV_STYLE = { fontFamily: '"Akkurat", sans-serif', transition: 'background-color 200ms ease, opacity 150ms ease' };
 const NAV_INNER_STYLE = { zIndex: "var(--nav-z-index, 200)", transition: "background-color 200ms ease" };
 const NAV_INNER_STYLE_SOLID = { zIndex: "var(--nav-z-index, 200)", backgroundColor: "#fbfdf6", transition: "background-color 200ms ease" };
 const CHEVRON_OPEN_STYLE = { transition: "transform 488ms cubic-bezier(0.40, 0.25, 0.15, 0.95)", transform: "rotate(180deg)" };
@@ -439,19 +439,42 @@ const ProductsMenu = memo(function ProductsMenu() {
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [pastHero, setPastHero] = useState(false);
+  const navRef = useRef(null);
+  const navBarRef = useRef(null);
   const hasOpenedRef = useRef(false);
   const pastHeroRef = useRef(false);
   if (menuOpen) hasOpenedRef.current = true;
 
   useEffect(() => {
-    let threshold = null;
+    const HERO_SCROLL_DISTANCE = 600;
+    let heroThreshold = null;
     const update = () => {
-      if (threshold === null) {
-        const el = document.querySelector("main > div");
-        if (el) threshold = el.offsetTop;
+      if (!navRef.current) return;
+      const scrollY = window.scrollY;
+
+      // Compute hero threshold: hero is 2000px with -50vh margin
+      if (heroThreshold === null) {
+        const hero = document.querySelector("main > div:first-child");
+        if (hero) heroThreshold = hero.offsetHeight - window.innerHeight * 0.5;
       }
-      if (threshold !== null) {
-        const past = window.scrollY + 64 >= threshold;
+
+      if (navBarRef.current && heroThreshold !== null) {
+        // Fade out over first 600px of scroll
+        // Stay invisible through the hero
+        // Fade back in as we approach the section after the hero
+        const fadeInStart = heroThreshold - 300;
+        let opacity;
+        if (scrollY <= HERO_SCROLL_DISTANCE) {
+          opacity = 1 - scrollY / HERO_SCROLL_DISTANCE;
+        } else if (scrollY < fadeInStart) {
+          opacity = 0;
+        } else {
+          opacity = Math.min(1, (scrollY - fadeInStart) / 300);
+        }
+        navBarRef.current.style.opacity = opacity;
+
+        // Show solid background once navbar has faded back in near the anchor menu
+        const past = scrollY >= fadeInStart;
         if (past !== pastHeroRef.current) {
           pastHeroRef.current = past;
           setPastHero(past);
@@ -469,10 +492,13 @@ export default function Navbar() {
 
   return (
     <nav
+      id="site-nav"
+      ref={navRef}
       className="sticky top-0 left-0 right-0 h-0 pointer-events-auto z-[var(--nav-z-index)]"
       style={NAV_STYLE}
     >
       <div
+        ref={navBarRef}
         className="relative flex flex-row items-center justify-center px-[48px] h-[var(--nav-height)] shadow-[0_1px_0_0_transparent] transition-shadow duration-200"
         style={pastHero || menuOpen ? NAV_INNER_STYLE_SOLID : NAV_INNER_STYLE}
       >
