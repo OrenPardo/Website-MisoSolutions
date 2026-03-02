@@ -178,10 +178,11 @@ export default function Hero() {
       sticky.style.transform = `scale(${scale})`;
       sticky.style.borderRadius = `${radius}px`;
 
-      // Content fades out as it scrolls off-screen
-      const contentBottom = content.getBoundingClientRect().bottom;
-      const contentH = content.offsetHeight;
-      const contentOpacity = Math.max(0, Math.min(1, (contentBottom - 64) / (contentH * 0.35)));
+      // Content fades out gradually — fully invisible before header reaches "Trusted by"
+      const h1 = content.querySelector("h1");
+      const h1Bottom = h1 ? h1.getBoundingClientRect().bottom : content.getBoundingClientRect().bottom;
+      const fadeRange = window.innerHeight * 0.3;
+      const contentOpacity = Math.max(0, Math.min(1, (h1Bottom - 64) / fadeRange));
       content.style.opacity = String(contentOpacity);
 
       animFrameId = requestAnimationFrame(animate);
